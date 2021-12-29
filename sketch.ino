@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <MySQL_Connection.h>
+#include <MySQL_Cursor.h>
 
 // Configurações de IP
 byte mac_addr[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -15,6 +16,9 @@ IPAddress subnet(0, 0, 0, 0);
 IPAddress server_addr(0, 0, 0, 0);  // IP of the MySQL *server* here
 char user[] = "user"; // MySQL user login username
 char password[] = "passwd@"; // MySQL user login password
+
+//Exemplo de insert
+char INSERT_SQL[] = "INSERT INTO arduino.Funcionarios (Nome, Funcao) VALUES ('Samuel Nunes','Teste')";
 
 EthernetClient client;
 MySQL_Connection conn((Client *)&client);
@@ -33,12 +37,24 @@ void setup() {
   }
   else
     Serial.println("Connection failed.");
-  conn.close();
 }
 
 void Sucess(){
   Serial.println("Connection accept."); // You would add your code here to run a query once on startup.
 }
 
-void loop() { 
+void loop() {
+  delay(2000);
+
+  Serial.println("Recording data.");
+
+  //iniciar query
+  
+  MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+
+  //execute
+
+  cur_mem->execute(INSERT_SQL);
+  delete cur_mem;
+  conn.close();
 }
